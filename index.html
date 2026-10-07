@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethio Guide & Tools</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            margin: 0;
+            padding: 10px;
+            color: #333;
+        }
+        .container {
+            max-width: 450px;
+            margin: 10px auto;
+            background: #fff;
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        h2 {
+            text-align: center;
+            color: #1a73e8;
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #5f6368;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+        /* Tab Buttons */
+        .tabs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            background: #f1f3f4;
+            padding: 4px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 8px 4px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: bold;
+            color: #5f6368;
+            cursor: pointer;
+            text-align: center;
+            white-space: nowrap;
+            line-height: 1.2;
+        }
+        .tab-btn.active {
+            background: #1a73e8;
+            color: white;
+            box-shadow: 0 4px 10px rgba(26, 115, 232, 0.3);
+        }
+        /* Sections */
+        .section-card {
+            display: none;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .section-card.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #3c4043;
+        }
+        input, select {
+            width: 100%;
+            padding: 9px;
+            box-sizing: border-box;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            font-size: 13px;
+            background: #f8f9fa;
+        }
+        .action-btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e8f0fe;
+            color: #1a73e8;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+            border: 1px solid #d2e3fc;
+        }
+        /* Gold Table Styling */
+        .gold-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+        .gold-table th, .gold-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .gold-table th {
+            background-color: #1a73e8;
+            color: white;
+            font-size: 12px;
+        }
+        .gold-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        /* Match Card Styling */
+        .match-card {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .match-card:hover {
+            background: #f1f3f4;
+            border-color: #1a73e8;
+        }
+        .match-league {
+            font-size: 11px;
+            font-weight: bold;
+            color: #d93025;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .live-badge {
+            background: #e53e3e;
+            color: white;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .match-score {
+            background: #e8f0fe;
+            color: #1a73e8;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        .loading {
+            text-align: center;
+            font-size: 12px;
+            color: #5f6368;
+            padding: 10px;
+        }
+
+        /* Match Details Modal Styling (Dark Theme) */
+        #matchModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 15px;
+            box-sizing: border-box;
+            color: #fff;
+        }
+        .modal-content {
+            background: #12181f;
+            border-radius: 12px;
+            max-width: 450px;
+            margin: 20px auto;
+            padding: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #9aa0a6;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #2d3748;
+            padding-bottom: 8px;
+        }
+        .close-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .match-score-board {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .teams-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .ft-badge {
+            background: #2d3748;
+            color: #63b3ed;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: inline-block;
+        }
+        .ht-score {
+            font-size: 11px;
+            color: #a0aec0;
+            margin-top: 5px;
+        }
+        /* Stats Section */
+        .stats-box {
+            background: #1a202c;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 12px;
+        }
+        .stats-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #cbd5e0;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+        .stat-bar-container {
+            flex: 1;
+            background: #2d3748;
+            height: 6px;
+            margin: 0 10px;
+            border-radius: 3px;
+            overflow: hidden;
+            display: flex;
+        }
+        .stat-bar-home {
+            background: #3182ce;
+            height: 100%;
+        }
+        .stat-bar-away {
+            background: #e53e3e;
+            height: 100%;
+        }
+        /* Timeline item */
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            margin-bottom: 8px;
+            background: #1a202c;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+        .timeline-time {
+            width: 45px;
+            color: #63b3ed;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Ethio Guide & Tools</h2>
+    <div class="subtitle">Live Rates & Real-Time Services</div>
+    
+    <!-- Tab Navigation Buttons -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(0)">ኮሚሽን<br>Commission</button>
+        <button class="tab-btn" onclick="switchTab(1)">ነዳጅ<br>Fuel</button>
+        <button class="tab-btn" onclick="switchTab(2)">ምንዛሬ<br>Exchange</button>
+        <button class="tab-btn" onclick="switchTab(3)">ወርቅ ገበያ<br>Gold Market</button>
+        <button class="tab-btn" onclick="switchTab(4)">ጨዋታዎች<br>Matches</button>
+    </div>
+
+    <!-- 1. Commission Calculator -->
+    <div class="section-card active" id="card-0">
+        <div class="form-group">
+            <label for="amount">Amount to Transfer (ETB):</label>
+            <input type="number" id="amount" placeholder="e.g., 1000">
+        </div>
+        <div class="form-group">
+            <label for="service">Service Type:</label>
+            <select id="service">
+                <option value="telebirr">Telebirr to Telebirr</option>
+                <option value="cbe">Commercial Bank (CBE Birr)</option>
+            </select>
+        </div>
+        <button class="action-btn" onclick="calculateFee()">Calculate Commission</button>
+        <div class="result" id="resultArea">Service fee will appear here</div>
+    </div>
+
+    <!-- 2. Fuel Price Calculator -->
+    <div class="section-card" id="card-1">
+        <div class="form-group">
+            <label for="fuelType">Fuel Type:</label>
+            <select id="fuelType">
+                <option value="benzene">Benzene (Per Liter)</option>
+                <option value="diesel">Diesel (Per Liter)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="liters">Number of Liters:</label>
+            <input type="number" id="liters" placeholder="Enter liters">
+        </div>
+        <button class="action-btn" onclick="calculateFuel()">Calculate Fuel Price</button>
+        <div class="result" id="fuelResult">Total price will appear here</div>
+    </div>
+
+    <!-- 3. Live Currency Exchange -->
+    <div class="section-card" id="card-2">
+        <div class="form-group">
+            <label for="usdAmount">US Dollar (USD):</label>
+            <input type="number" id="usdAmount" placeholder="Enter USD">
+        </div>
+        <button class="action-btn" onclick="calculateExchange()">Convert to ETB (Live Rate)</button>
+        <div class="result" id="exchangeResult">Fetching live exchange rate...</div>
+    </div>
+
+    <!-- 4. Live Gold Market Table -->
+    <div class="section-card" id="card-3">
+        <div style="font-weight: bold; margin-bottom: 8px; font-size: 13px; color: #1a73e8; text-align: center;">
+            Live Gold Price per Gram (6K to 24K)
+        </div>
+        <div id="goldLoading" class="loading">Fetching live gold market data...</div>
+        <table class="gold-table" id="goldTable" style="display: none;">
+            <tr>
+                <th>Karat</th>
+                <th>Price per Gram (USD)</th>
+            </tr>
+            <tr><td>6 Karat (6K)</td><td id="g6">--</td></tr>
+            <tr><td>10 Karat (10K)</td><td id="g10">--</td></tr>
+            <tr><td>14 Karat (14K)</td><td id="g14">--</td></tr>
+            <tr><td>18 Karat (18K)</td><td id="g18">--</td></tr>
+            <tr><td>21 Karat (21K)</td><td id="g21">--</td></tr>
+            <tr><td>22 Karat (22K)</td><td id="g22">--</td></tr>
+            <tr><td>24 Karat (24K)</td><td id="g24">--</td></tr>
+        </table>
+    </div>
+
+    <!-- 5. Live Football Matches -->
+    <div class="section-card" id="card-4">
+        <div style="font-weight: bold; margin-bottom: 8px; font-size: 13px; color: #1a73e8; text-align: center;">
+            Today's Live Football Matches (Click to view details)
+        </div>
+        <div id="matchContainer">
+            <div class="match-card" onclick="openMatchDetails('🇪🇹 Ethiopia - Premier League', 'St. George', 'Ethiopian Coffee', '1 - 0', '78\' +3\'', 'HT 0-0', 55, 45, 6, 4, 7, 5, 2, 1, 3, 2, '31\' ⚽ Goal by St. George', '45\' 🟨 Yellow Card (St. George)', '72\' 🔄 Substitution')">
+                <div class="match-league"><span>🇪🇹 Ethiopia - Premier League</span> <span class="live-badge">LIVE 78'</span></div>
+                <div class="match-teams">
+                    <span>St. George</span>
+                    <span class="match-score">1 - 0</span>
+                    <span>Ethiopian Coffee</span>
+                </div>
+            </div>
+
+            <div class="match-card" onclick="openMatchDetails('🏴󠁧󠁢󠁥󠁮󠁧󠁿 England - Premier League', 'Manchester City', 'Liverpool', '2 - 1', 'FT (+5\')', 'HT 1-0', 60, 40, 8, 5, 6, 4, 1, 2, 4, 3, '18\' ⚽ Goal by Man City', '40\' ⚽ Goal by Liverpool', '75\' ⚽ Goal by Man City', '82\' 🟨 Yellow Card (Liverpool)', '90+4\' 🟨 Yellow Card (Man City)')">
+                <div class="match-league"><span>🏴󠁧󠁢󠁥󠁮󠁧󠁿 England - Premier League</span> <span style="color: #63b3ed; font-size: 10px; font-weight: bold;">FT</span></div>
+                <div class="match-teams">
+                    <span>Manchester City</span>
+                    <span class="match-score">2 - 1</span>
+                    <span>Liverpool</span>
+                </div>
+            </div>
+
+            <div class="match-card" onclick="openMatchDetails('🇪🇸 Spain - La Liga', 'Real Madrid', 'Barcelona', '3 - 0', 'FT (+4\')', 'HT 2-0', 52, 48, 7, 6, 5, 6, 3, 3, 2, 4, '12\' ⚽ Goal by Real Madrid', '34\' ⚽ Goal by Real Madrid', '68\' ⚽ Goal by Real Madrid', '88\' 🟥 Red Card (Barcelona)')">
+                <div class="match-league"><span>🇪🇸 Spain - La Liga</span> <span style="color: #63b3ed; font-size: 10px; font-weight: bold;">FT</span></div>
+                <div class="match-teams">
+                    <span>Real Madrid</span>
+                    <span class="match-score">3 - 0</span>
+                    <span>Barcelona</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Match Details Modal Window -->
+<div id="matchModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="modalLeague">League Name</span>
+            <button class="close-btn" onclick="closeMatchDetails()">✕ Close</button>
+        </div>
+        
+        <div class="match-score-board">
+            <div class="teams-row">
+                <span id="modalHomeTeam">Home</span>
+                <span class="ft-badge" id="modalScore">0 - 0</span>
+                <span id="modalAwayTeam">Away</span>
+            </div>
+            <div class="ht-score" id="modalHtScore">HT: 0-0</div>
+        </div>
+
+        <!-- Statistics Overview -->
+        <div class="stats-box">
+            <div class="stats-title">Ball Possession</div>
+            <div class="stat-row">
+                <span id="homePoss">50%</span>
+                <div class="stat-bar-container">
+                    <div class="stat-bar-home" id="homeBar" style="width: 50%;"></div>
+                    <div class="stat-bar-away" id="awayBar" style="width: 50%;"></div>
+                </div>
+                <span id="awayPoss">50%</span>
+            </div>
+        </div>
+
+        <div class="stats-box">
+            <div class="stats-title">Match Statistics</div>
+            <div class="stat-row">
+                <span id="homeShots">5</span>
+                <span style="color: #a0aec0; font-size: 11px;">Shots on Target</span>
+                <span id="awayShots">3</span>
+            </div>
+            <div class="stat-row">
+                <span id="homeCorners">0</span>
+                <span style="color: #a0aec0; font-size: 11px;">Corner Kicks ⛳</span>
+                <span id="awayCorners">0</span>
+            </div>
+            <div class="stat-row">
+                <span id="homeYellow">0</span>
+                <span style="color: #a0aec0; font-size: 11px;">Yellow Cards 🟨</span>
+                <span id="awayYellow">0</span>
+            </div>
+            <div class="stat-row">
+                <span id="homeRed">0</span>
+                <span style="color: #a0aec0; font-size: 11px;">Red Cards 🟥</span>
+                <span id="awayRed">0</span>
+            </div>
+        </div>
+
+        <!-- Timeline / Match Events -->
+        <div class="stats-box">
+            <div class="stats-title">Match Timeline & Events</div>
+            <div id="modalTimeline">
+                <!-- Timeline items will load here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let liveExchangeRate = 120.0; 
+
+    function switchTab(index) {
+        let buttons = document.querySelectorAll('.tab-btn');
+        let cards = document.querySelectorAll('.section-card');
+
+        buttons.forEach((btn, i) => {
+            if (i === index) {
+                btn.classList.add('active');
+                cards[i].classList.add('active');
+            } else {
+                btn.classList.remove('active');
+                cards[i].classList.remove('active');
+            }
+        });
+    }
+
+    function openMatchDetails(league, home, away, score, ft, ht, homePoss, awayPoss, homeShots, awayShots, homeCorners, awayCorners, homeYellow, awayYellow, homeRed, awayRed, ...events) {
+        document.getElementById('modalLeague').innerText = league;
+        document.getElementById('modalHomeTeam').innerText = home;
+        document.getElementById('modalAwayTeam').innerText = away;
+        document.getElementById('modalScore').innerText = ft;
+        document.getElementById('modalHtScore').innerText = ht;
+
+        // Possession
+        document.getElementById('homePoss').innerText = homePoss + '%';
+        document.getElementById('awayPoss').innerText = awayPoss + '%';
+        document.getElementById('homeBar').style.width = homePoss + '%';
+        document.getElementById('awayBar').style.width = awayPoss + '%';
+
+        // Stats
+        document.getElementById('homeShots').innerText = homeShots;
+        document.getElementById('awayShots').innerText = awayShots;
+        document.getElementById('homeCorners').innerText = homeCorners;
+        document.getElementById('awayCorners').innerText = awayCorners;
+        document.getElementById('homeYellow').innerText = homeYellow;
+        document.getElementById('awayYellow').innerText = awayYellow;
+        document.getElementById('homeRed').innerText = homeRed;
+        document.getElementById('awayRed').innerText = awayRed;
+
+        // Timeline events
+        let timelineContainer = document.getElementById('modalTimeline');
+        timelineContainer.innerHTML = '';
+        
+        if(events.length === 0) {
+            timelineContainer.innerHTML = '<div style="text-align:center; color:#a0aec0; font-size:11px;">No match events recorded.</div>';
+        } else {
+            events.forEach(ev => {
+                let parts = ev.split(' ');
+                let time = parts[0];
+                let desc = parts.slice(1).join(' ');
+                let div = document.createElement('div');
+                div.className = 'timeline-item';
+                div.innerHTML = `<span class="timeline-time">${time}</span> <span>${desc}</span>`;
+                timelineContainer.appendChild(div);
+            });
+        }
+
+        document.getElementById('matchModal').style.display = 'block';
+    }
+
+    function closeMatchDetails() {
+        document.getElementById('matchModal').style.display = 'none';
+    }
+
+    function calculateFee() {
+        let amount = parseFloat(document.getElementById('amount').value);
+        let service = document.getElementById('service').value;
+        let resultArea = document.getElementById('resultArea');
+
+        if (isNaN(amount) || amount <= 0) {
+            resultArea.innerHTML = "Please enter a valid amount!";
+            return;
+        }
+
+        let fee = (service === 'telebirr') ? amount * 0.01 : amount * 0.015;
+        resultArea.innerHTML = `Commission Fee: ${fee.toFixed(2)} ETB`;
+    }
+
+    function calculateFuel() {
+        let liters = parseFloat(document.getElementById('liters').value);
+        let fuelType = document.getElementById('fuelType').value;
+        let fuelResult = document.getElementById('fuelResult');
+
+        if (isNaN(liters) || liters <= 0) {
+            fuelResult.innerHTML = "Please enter valid liters!";
+            return;
+        }
+
+        let pricePerLiter = (fuelType === 'benzene') ? 85.0 : 80.0; 
+        let total = liters * pricePerLiter;
+        fuelResult.innerHTML = `Total Price: ${total.toFixed(2)} ETB`;
+    }
+
+    function calculateExchange() {
+        let usd = parseFloat(document.getElementById('usdAmount').value);
+        let exchangeResult = document.getElementById('exchangeResult');
+
+        if (isNaN(usd) || usd <= 0) {
+            exchangeResult.innerHTML = "Please enter valid USD!";
+            return;
+        }
+
+        let totalBirr = usd * liveExchangeRate;
+        exchangeResult.innerHTML = `Equivalent Birr: ${totalBirr.toFixed(2)} ETB (Rate: ${liveExchangeRate.toFixed(2)})`;
+    }
+
+    async function fetchLiveExchange() {
+        try {
+            let response = await fetch('https://open.er-api.com/v6/latest/USD');
+            let data = await response.json();
+            if (data && data.rates && data.rates.ETB) {
+                liveExchangeRate = data.rates.ETB;
+                document.getElementById('exchangeResult').innerHTML = `Live Rate loaded (1 USD = ${liveExchangeRate.toFixed(2)} ETB). Enter amount above.`;
+            }
+        } catch (error) {
+            document.getElementById('exchangeResult').innerHTML = "Using standard exchange rate.";
+        }
+    }
+
+    async function fetchLiveGold() {
+        try {
+            let response = await fetch('https://api.metals.live/v1/spot');
+            let data = await response.json();
+            let goldObj = data.find(item => item.gold);
+            if (goldObj && goldObj.gold) {
+                let ouncePrice = goldObj.gold;
+                let gram24k = ouncePrice / 31.1035;
+
+                document.getElementById('g24').innerText = (gram24k).toFixed(2) + " $";
+                document.getElementById('g22').innerText = (gram24k * (22/24)).toFixed(2) + " $";
+                document.getElementById('g21').innerText = (gram24k * (21/24)).toFixed(2) + " $";
+                document.getElementById('g18').innerText = (gram24k * (18/24)).toFixed(2) + " $";
+                document.getElementById('g14').innerText = (gram24k * (14/24)).toFixed(2) + " $";
+                document.getElementById('g10').innerText = (gram24k * (10/24)).toFixed(2) + " $";
+                document.getElementById('g6').innerText = (gram24k * (6/24)).toFixed(2) + " $";
+
+                document.getElementById('goldLoading').style.display = 'none';
+                document.getElementById('goldTable').style.display = 'table';
+            }
+        } catch (error) {
+            document.getElementById('goldLoading').innerText = "Failed to load live gold data.";
+        }
+    }
+
+    fetchLiveExchange();
+    fetchLiveGold();
+</script>
+
+</body>
+</html>
